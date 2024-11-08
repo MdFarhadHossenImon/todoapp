@@ -16,6 +16,7 @@ class Urls {
       '$_baseUrl/RecoverVerifyOtp/$email/$otp';
 
 
+
   // static const String forgetPasswordOtpVerify = '$_baseUrl/RecoverVerifyOtp/email@gmail.com/121465';
 
   static const String recoverPassword = '$_baseUrl/RecoverResetPassword';

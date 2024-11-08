@@ -1,4 +1,3 @@
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:project01/ui/screens/forgot_password_otp_screen.dart';
@@ -68,7 +67,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
         ),
         const SizedBox(height: 24),
         _isRequestInProgress
-            ? CircularProgressIndicator()
+            ? const CircularProgressIndicator()
             : ElevatedButton(
           onPressed: _onTapNextButton,
           child: const Icon(Icons.arrow_circle_right_outlined),
@@ -96,7 +95,6 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
     );
   }
 
-
   Future<void> _onTapNextButton() async {
     final String email = _emailController.text.trim();
 
@@ -111,17 +109,21 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
     final String apiUrl = Urls.forgetPasswordVerifyEmail(email);
 
     try {
-      final NetworkResponse response = await NetworkCaller.getRequest(url: apiUrl);
+      final NetworkResponse response =
+      await NetworkCaller.getRequest(url: apiUrl);
 
       if (response.isSuccess) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ForgotPasswordOtpScreen(),
+            builder: (context) => ForgotPasswordOtpScreen(email: email),
           ),
         );
       } else {
-        showSnackBarMessage(context, response.errorMessage ?? 'Something went wrong. Please try again.', true);
+        showSnackBarMessage(
+            context,
+            response.errorMessage ?? 'Something went wrong. Please try again.',
+            true);
       }
     } catch (e) {
       showSnackBarMessage(context, 'An error occurred: $e', true);
@@ -131,10 +133,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
     }
   }
 
-
-
   void _onTapSignIn() {
     Navigator.pop(context);
   }
 }
-

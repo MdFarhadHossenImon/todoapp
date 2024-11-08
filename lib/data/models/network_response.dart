@@ -9,4 +9,6 @@ class NetworkResponse {
         required this.statusCode,
         this.responseData,
         this.errorMessage = 'Something went wrong'});
+
+  get responseBody => null;
 }
