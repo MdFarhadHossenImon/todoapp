@@ -9,7 +9,14 @@ import 'package:project01/ui/widgets/snack_bar_message.dart';
 import 'package:project01/data/utils/urls.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+  final String email;
+  final String otp; // Add OTP parameter
+
+  const ResetPasswordScreen({
+    super.key,
+    required this.email,
+    required this.otp, // Make OTP required
+  });
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -17,7 +24,8 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+  TextEditingController();
   bool _isRequestInProgress = false;
 
   @override
@@ -60,24 +68,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Widget _buildResetPasswordForm() {
     return Column(
       children: [
-        TextFormField(
-          controller: _passwordController,
-          decoration: const InputDecoration(hintText: 'Password'),
-          obscureText: true,
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: _confirmPasswordController,
-          decoration: const InputDecoration(hintText: 'Confirm Password'),
-          obscureText: true,
-        ),
-        const SizedBox(height: 24),
-        _isRequestInProgress
-            ? CircularProgressIndicator()
-            : ElevatedButton(
-          onPressed: _onTapNextButton,
-          child: const Icon(Icons.arrow_circle_right_outlined),
-        ),
+      TextFormField(
+      controller: _passwordController,
+      decoration: const InputDecoration(hintText: 'Password'),
+      obscureText: true,
+    ),
+    const SizedBox(height: 8),
+    TextFormField(
+    controller: _confirmPasswordController,
+    decoration: const InputDecoration(hintText: 'Confirm Password'),
+    obscureText: true,
+    ),
+    const SizedBox(height: 24),
+    _isRequestInProgress
+    ? const CircularProgressIndicator()
+        : ElevatedButton(
+    onPressed: _onTapNextButton,
+    child: const Icon(Icons.arrow_circle_right_outlined),
+    ),
       ],
     );
   }
@@ -116,32 +124,39 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
 
     if (password.length < 8) {
-      showSnackBarMessage(context, "Password must be at least 8 characters.", true);
+      showSnackBarMessage(
+          context, "Password must be at least 8 characters.", true);
       return;
     }
 
     _isRequestInProgress = true;
     setState(() {});
 
-    final NetworkResponse response = await NetworkCaller.postRequest(
-      url: Urls.recoverPassword,
-      body: {
-        "password": password,
-      },
-    );
-
-    if (response.isSuccess) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const SignInScreen()),
-            (_) => false,
+    try {
+      final NetworkResponse response = await NetworkCaller.postRequest(
+        url: Urls.recoverPassword,
+        body: {
+          "email": widget.email,
+          "OTP": widget.otp, // Use received OTP
+          "password": password,
+        },
       );
-    } else {
-      showSnackBarMessage(context, response.errorMessage, true);
-    }
 
-    _isRequestInProgress = false;
-    setState(() {});
+      if (response.isSuccess) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const SignInScreen()),
+              (_) => false,
+        );
+      } else {
+        showSnackBarMessage(context, response.errorMessage, true);
+      }
+    } catch (e) {
+      showSnackBarMessage(context, 'An error occurred: $e', true);
+    } finally {
+      _isRequestInProgress = false;
+      setState(() {});
+    }
   }
 
   void _onTapSignIn() {

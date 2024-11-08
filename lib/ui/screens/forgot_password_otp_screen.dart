@@ -11,7 +11,9 @@ import 'package:project01/ui/widgets/snack_bar_message.dart';
 import 'package:project01/data/utils/urls.dart';
 
 class ForgotPasswordOtpScreen extends StatefulWidget {
-  const ForgotPasswordOtpScreen({super.key});
+  final String email;
+
+  const ForgotPasswordOtpScreen({super.key, required this.email});
 
   @override
   _ForgotPasswordOtpScreenState createState() =>
@@ -20,8 +22,6 @@ class ForgotPasswordOtpScreen extends StatefulWidget {
 
 class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
   final TextEditingController _otpController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-
   bool _isRequestInProgress = false;
 
   @override
@@ -39,7 +39,8 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                 const SizedBox(height: 82),
                 Text(
                   'Pin Verification',
-                  style: textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w500),
+                  style: textTheme.displaySmall
+                      ?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -114,7 +115,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
   }
 
   Future<void> _onTapNextButton() async {
-    final String email = _emailController.text.trim();
+    final String email = widget.email;
     final String otp = _otpController.text.trim();
 
     if (otp.isEmpty || otp.length != 6) {
@@ -126,25 +127,28 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
       _isRequestInProgress = true;
     });
 
-    print('Email: $email');
-    print('OTP: $otp');
-
     try {
       String url = Urls.forgetPasswordOtpVerify(email, otp);
 
-      print('Request URL: $url');
-
       final NetworkResponse response = await NetworkCaller.getRequest(url: url);
 
-      print('Response: ${response.isSuccess}, Message: ${response.errorMessage}');
-
       if (response.isSuccess) {
+        // Navigate to ResetPasswordScreen with email and OTP
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
+          MaterialPageRoute(
+            builder: (context) => ResetPasswordScreen(
+              email: email,
+              otp: otp, // Pass OTP to ResetPasswordScreen
+            ),
+          ),
         );
       } else {
-        showSnackBarMessage(context, response.errorMessage ?? 'Something went wrong. Please try again.', true);
+        showSnackBarMessage(
+          context,
+          response.errorMessage ?? 'Something went wrong. Please try again.',
+          true,
+        );
       }
     } catch (e) {
       showSnackBarMessage(context, 'An error occurred: $e', true);
@@ -159,8 +163,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const SignInScreen()),
-          (_) => false,
+          (route) => false,
     );
   }
 }
-

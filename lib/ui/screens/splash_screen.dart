@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _moveToNextScreen() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 3));
     await AuthController.getAccessToken();
     if (AuthController.isLoggedIn()) {
       await AuthController.getUserData();
@@ -52,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               SvgPicture.asset(
                 AssetsPath.logoSvg,
-                width: 120,
+                width: 230,
               )
             ],
           ),
