@@ -33,6 +33,7 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
             const CircleAvatar(
               radius: 16,
               backgroundColor: Colors.white,
+
             ),
             const SizedBox(width: 16),
             Expanded(
