@@ -6,6 +6,8 @@ import 'package:project01/ui/screens/progress_task_screen.dart';
 import 'package:project01/ui/widgets/tm_app_bar.dart';
 
 class MainBottomNavBarScreen extends StatefulWidget {
+  static const String name = '/home';
+
   const MainBottomNavBarScreen({super.key});
 
   @override
